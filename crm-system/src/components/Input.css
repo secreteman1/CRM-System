@@ -1,0 +1,18 @@
+input {
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-color: lightgrey;    
+    height: 30px;
+    width: 220px;
+}
+
+button {
+    background-color: rgb(83,147,255);
+    color: white;
+    margin-left: 10px;
+    border-radius: 6px;     
+    width: 80px; 
+    border: transparent;
+    height: 30px;
+}
