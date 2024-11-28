@@ -6,8 +6,12 @@ main {
   margin-top: 20px;
 }
 
+body {
+  background-color: #F2F2FA;
+}
 .button-group { 
   display: flex;
+  margin-top: 15px;
 }
  
 .input-button-group {
