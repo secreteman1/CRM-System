@@ -4,70 +4,78 @@ import Data from "./components/Data/Data.js";
 import { useState, useEffect } from "react";
 import "./App.css";
 function App() {
-  const [something, setSomething] = useState("all");
+  const [title, setSomething] = useState("all");
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantityInformation, setQuantityInformation] = useState("0");
+  const [isValid, setIsValid] = useState(true);
   function handleClick(name) {
     setSomething(name);
   }
 
-  useEffect(
-    (something) => {
-      const fetchTodos = async () => {
-        try {
-          const response = await fetch(
-            `https://easydev.club/api/v1/todos?filter=${something}`
-          );
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const data = await response.json();
-          setTodos(data.data);
-          setQuantityInformation(data.info);
-        } catch (error) {
-          setError(error);
-        } finally {
-          setLoading(false);
-        }
-      };
+  function handleValidation(value) {
+    setIsValid(value);
+  }
 
-      fetchTodos();
-    },
-    [something]
-  );
+  const fetchTodos = async () => {
+    try {
+      const response = await fetch(
+        `https://easydev.club/api/v1/todos?filter=${title}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setTodos(data.data);
+      setQuantityInformation(data.info);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTodos(title);
+  }, [title]);
 
   return (
     <div>
       <main>
-        <Input></Input>
+        <Input refresh={fetchTodos} validation={handleValidation}></Input>
+        {!isValid && (
+          <p className="error-p">Количество символов минимум 2 максимум 64</p>
+        )}
         <div className="button-group">
           <Button
             className={
-              something === "all" ? "no-background-picked" : "no-background"
+              title === "all" ? "no-background-picked" : "no-background"
             }
             title={`Все (${quantityInformation.all})`}
             onClick={() => handleClick("all")}
           />
           <Button
             className={
-              something === "inWork" ? "no-background-picked" : "no-background"
+              title === "inWork" ? "no-background-picked" : "no-background"
             }
             title={`В работе (${quantityInformation.inWork})`}
             onClick={() => handleClick("inWork")}
           />
           <Button
             className={
-              something === "completed"
-                ? "no-background-picked"
-                : "no-background"
+              title === "completed" ? "no-background-picked" : "no-background"
             }
             title={`Сделано (${quantityInformation.completed})`}
             onClick={() => handleClick("completed")}
           />
         </div>
-        <Data information={todos} title={something}></Data>
+        <Data
+          information={todos}
+          title={title}
+          refresh={fetchTodos}
+          validation={handleValidation}
+        ></Data>
       </main>
     </div>
   );
